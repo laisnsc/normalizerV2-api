@@ -39,10 +39,16 @@ class NormalizerService
   end
 
   def persist_data(data)
-    find_or_create_object(data['users'], 'user', :name)
-    find_or_create_object(data['orders'], 'order', :user_id, :date)
-    find_or_create_object(data['orders'],'product', :name)
-    find_or_create_object(data['orders'], 'order_product',:order_id, :product_id, :value)
+    ApplicationRecord.transaction do
+      begin
+        find_or_create_object(data['users'], 'user', :name)
+        find_or_create_object(data['orders'], 'order', :user_id, :date)
+        find_or_create_object(data['orders'],'product', :name)
+        find_or_create_object(data['orders'], 'order_product',:order_id, :product_id, :value)
+      rescue
+        raise ActiveRecord::Rollback
+      end
+    end
   end
 
   def find_or_create_object(objects, model, *params)
