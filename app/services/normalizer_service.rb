@@ -1,6 +1,5 @@
 class NormalizerService
-
-  def initialize(file, order_ids=nil, start_date=nil, end_date=nil)
+  def initialize(file, order_ids = nil, start_date = nil, end_date = nil)
     raise ArgumentError, "File does not exist" if file.blank?
 
     @order_ids = order_ids
@@ -12,7 +11,7 @@ class NormalizerService
   def process_data
     normalized_data = normalize_data(@data)
     persist_data(normalized_data)
-    filters = build_data_filters(normalized_data['order_ids'])
+    filters = build_data_filters(normalized_data["order_ids"])
     generate_response(filters)
   end
 
@@ -35,16 +34,16 @@ class NormalizerService
     end
 
     file_order_values = user_orders_data.map { |uod| uod[:order_id] }.uniq.sort
-    {'users' => user_data.values, 'orders' => user_orders_data, 'order_ids' => file_order_values }
+    { "users" => user_data.values, "orders" => user_orders_data, "order_ids" => file_order_values }
   end
 
   def persist_data(data)
     ApplicationRecord.transaction do
       begin
-        find_or_create_object(data['users'], 'user', :name)
-        find_or_create_object(data['orders'], 'order', :user_id, :date)
-        find_or_create_object(data['orders'],'product', :name)
-        find_or_create_object(data['orders'], 'order_product',:order_id, :product_id, :value)
+        find_or_create_object(data["users"], "user", :name)
+        find_or_create_object(data["orders"], "order", :user_id, :date)
+        find_or_create_object(data["orders"], "product", :name)
+        find_or_create_object(data["orders"], "order_product", :order_id, :product_id, :value)
       rescue
         raise ActiveRecord::Rollback
       end
@@ -54,7 +53,7 @@ class NormalizerService
   def find_or_create_object(objects, model, *params)
     model_class = Object.const_get("#{model.classify}")
     objects.each do |object|
-      attributes = params.map { |param| [param, object[param]] }.to_h
+      attributes = params.map { |param| [ param, object[param] ] }.to_h
       record = model_class.find_or_initialize_by(id: object["#{model}_id".to_sym])
       record.assign_attributes(attributes)
       record.save!
@@ -104,6 +103,8 @@ class NormalizerService
   end
 
   def get_order_product_data(products)
-    products.map { |prod| { product_id: prod.product_id, value: sprintf("%.2f", prod.value) } }
+    products.group_by(&:product_id).map do |prod, val|
+      { product_id: prod, value: sprintf("%.2f", val.sum(&:value)) }
+    end
   end
 end
