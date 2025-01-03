@@ -1,19 +1,11 @@
 # README
 
-# Desafio técnico - Vertical Logística
-
-# O desafio
-Temos uma demanda para integrar dois sistemas. O sistema legado que possui um arquivo de
-pedidos desnormalizado, precisamos transformá-lo em um arquivo json normalizado. E para isso
-precisamos satisfazer alguns requisitos.
-
-# Objetivo do desafio
-Faça um sistema que receba um arquivo via API REST e processe-o para ser retornado via API
-REST.
+# Ruby API
+Projeto para criação de uma API com Ruby on Rails, com tratamento de dados desnormalizado transformando-os
+em uma saída de dados json normalizado.
 
 # Entrada de dados
-O arquivo do sistema legado possui uma estrutura em que cada linha representa uma parte de um
-pedido. Os dados estão padronizados por tamanho de seus valores, respeitando a seguinte tabela:
+Os dados estão padronizados por tamanho de seus valores, respeitando a seguinte tabela:
 
 | campo            | tamanho | tipoSinal           |
 |------------------|---------|---------------------|
@@ -25,19 +17,19 @@ pedido. Os dados estão padronizados por tamanho de seus valores, respeitando a 
 | data de compra   | 8       | numerico (yyyymmdd) |
 
 # Saída de dados
-A saída de dados deverá ser disponibilizada via api REST considerando a estrutura base de payload
-de response. Considere a consulta geral de pedidos e, também, a inclusão de filtros:
+A saída de dados é disponibilizada via api REST considerando a estrutura base de payload
+de response. Gera uma consulta geral de pedidos e, também com os seguintes filtros:
 
 1. id do pedido;
 2. intervalo de data de compra (data início e data fim);
+3. pedidos de um usuário.
 
 
-# Key words
+# Conceitos
 * Testes
-* Lógica
-* Simplicidade
+* Banco de dados
+* Infrestrutura
 * SOLID
-* Linguagem (não estamos falando de framework)
 * Automação (Ex: Build, Coverage)
 * Desenho da API
 * Git
@@ -48,6 +40,9 @@ Ruby 3.3.5
 Rails - 8.0.0
 O banco de dados utilizado para persistência dos dados foi SQLite.
 ```
+### Futuras implementações:
+Frontend
+Infraestrutura no código (docker)
 
 ### Para rodar o projeto:
 ```
